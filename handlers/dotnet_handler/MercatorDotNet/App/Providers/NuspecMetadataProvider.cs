@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using NuGet;
+using NuGet.Packaging;
 
 namespace MercatorDotNet.App.Providers
 {
@@ -28,6 +28,7 @@ namespace MercatorDotNet.App.Providers
             {
                 // Now try to load without schema validation
                 // TODO: Note the fact that the manifest failed schema validation in the returned metadata
+                stream.Seek(0, SeekOrigin.Begin);
                 Manifest m2 = Manifest.ReadFrom(stream, false);
                 return m2;
             }
