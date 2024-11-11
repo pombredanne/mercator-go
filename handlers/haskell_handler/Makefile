@@ -1,4 +1,4 @@
-# Copyright 2016 Red Hat, Inc.
+# Copyright 2017 Red Hat, Inc.
 #
 # Mercator is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -15,9 +15,9 @@
 .PHONY : clean
 
 all:
-	mvn clean test package
-	cp target/java-handler-*-jar-with-dependencies.jar ../java
+	cabal clean && cabal update && cabal install --dependencies-only && cabal configure && cabal build
+	cp dist/build/mercator-hs/mercator-hs ../haskell
 	$(MAKE) clean
 
 clean:
-	mvn clean
+	rm -rf dist/

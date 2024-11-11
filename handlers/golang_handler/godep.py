@@ -1,4 +1,6 @@
-# Copyright 2016 Red Hat, Inc.
+#!/usr/bin/env python3
+
+# Copyright 2018 Red Hat, Inc.
 #
 # Mercator is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -10,14 +12,17 @@
 # GNU Lesser General Public License for more details.
 # You should have received a copy of the GNU Lesser General Public License
 # along with Mercator. If not, see <http://www.gnu.org/licenses/>.
-#
 
-.PHONY : clean
 
-all:
-	mvn clean test package
-	cp target/java-handler-*-jar-with-dependencies.jar ../java
-	$(MAKE) clean
+# Mercator handler for Godeps.json manifest files.
+# https://github.com/tools/godep
 
-clean:
-	mvn clean
+import sys
+import json
+
+
+if __name__ == '__main__':
+
+    with open(sys.argv[1]) as f:
+        # load and dump only
+        print(json.dumps(json.load(f)))

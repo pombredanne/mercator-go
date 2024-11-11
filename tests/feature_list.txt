@@ -4,4 +4,8 @@ features/java.feature
 features/ruby.feature
 features/dotnet.feature
 features/python.feature
-features/rust.feature
+features/python-dist.feature
+# features/rust.feature
+# features/haskell.feature
+features/golang.feature
+features/gradle.feature

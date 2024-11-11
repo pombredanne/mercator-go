@@ -10,16 +10,28 @@ from results import *
 SCANNED_JAR = 'fixtures/java-jar'
 SCANNED_PACKAGE_JSON = 'fixtures/javascript'
 SCANNED_SETUP_PY = 'fixtures/python'
+SCANNED_PKGINFO = 'fixtures/python-dist'
 SCANNED_RUBY = 'fixtures/ruby'
 SCANNED_DOTNET = 'fixtures/dotnet'
 SCANNED_RUST = 'fixtures/rust'
+SCANNED_HASKELL = 'fixtures/haskell'
+SCANNED_GOLANG_GLIDE = 'fixtures/golang-glide'
+SCANNED_GOLANG_GOPKG = 'fixtures/golang-gopkg'
+SCANNED_GOLANG_GODEP = 'fixtures/golang-godep'
+SCANNED_GRADLE = 'fixtures/gradle'
 
 result_dict = {'javascript': javascript_result,
                'java': java_result,
                'ruby': ruby_result,
                'dotnet': dotnet_result,
                'python': python_result,
-               'rustcargo': rust_result
+               'python-dist': python_dist_result,
+               'rustcargo': rust_result,
+               'haskell': haskell_result,
+               'goglide': goglide_result,
+               'gopkg': gopkg_result,
+               'godeps': godep_result,
+               'gradle': gradle_result
                }
 
 
@@ -45,7 +57,7 @@ def compare_dictionaries(a, b):
 @given('We have mercator installed')
 def step_impl(context):
     # this is workaround until mercator -h returns true
-    subprocess.check_output(['ls', '/usr/bin/mercator'])
+    subprocess.check_output(['ls', '/usr/local/bin/mercator'])
 
 
 @when('Scanning the jar file')
@@ -67,6 +79,12 @@ def get_scan_info(context):
     context.ecosystem = 'python'
 
 
+@when('Scanning the PKGINFO file')
+def get_scan_info(context):
+    context.out = subprocess.check_output(['mercator', SCANNED_PKGINFO]).decode('utf-8')
+    context.ecosystem = 'python-dist'
+
+
 @when('Scanning the dll file')
 def get_scan_info(context):
     context.out = subprocess.check_output(['mercator', SCANNED_DOTNET]).decode('utf-8')
@@ -83,6 +101,36 @@ def get_scan_info(context):
 def get_scan_info(context):
     context.out = subprocess.check_output(['mercator', SCANNED_RUST]).decode('utf-8')
     context.ecosystem = 'rustcargo'
+
+
+@when('Scanning the Cabal file')
+def get_scan_info(context):
+    context.out = subprocess.check_output(['mercator', SCANNED_HASKELL]).decode('utf-8')
+    context.ecosystem = 'haskell'
+
+
+@when('Scanning the Go Glide files')
+def get_scan_info(context):
+    context.out = subprocess.check_output(['mercator', SCANNED_GOLANG_GLIDE]).decode('utf-8')
+    context.ecosystem = 'goglide'
+
+
+@when('Scanning the Go Pkg files')
+def get_scan_info(context):
+    context.out = subprocess.check_output(['mercator', SCANNED_GOLANG_GOPKG]).decode('utf-8')
+    context.ecosystem = 'gopkg'
+
+
+@when('Scanning the Godeps.json files')
+def get_scan_info(context):
+    context.out = subprocess.check_output(['mercator', SCANNED_GOLANG_GODEP]).decode('utf-8')
+    context.ecosystem = 'godeps'
+
+
+@when('Scanning the build.gradle file')
+def get_scan_info(context):
+    context.out = subprocess.check_output(['mercator', SCANNED_GRADLE]).decode('utf-8')
+    context.ecosystem = 'gradle'
 
 
 @then('We have correct output')

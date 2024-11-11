@@ -33,9 +33,16 @@ import java.util.zip.ZipEntry;
 
 import org.json.simple.JSONObject;
 
+
+/**
+ * Mercator Java/Maven handler.
+ * 
+ * Supports pom.xml, JAR, WAR and EAR files.
+ */
 public class MercatorJava {
 
     public static void main(String[] args) {
+        // The CLI expects exactly one argument. It could be any of the supported file types.
         if (args.length != 1) {
             System.out.println("{\"error\": \"not enough arguments\"}");
             System.exit(1);
@@ -46,11 +53,7 @@ public class MercatorJava {
         try {
             if ((new File(args[0])).getName().equals("pom.xml")) {
                 // POM
-                if (resolvePomsEnabled()) {
-                    result = handlePomFile(args[0]).toString();
-                } else {
-                    result = "{\"error\": \"Processing of pom.xml files is not enabled.\"}";
-                }
+                result = handlePomFile(args[0]).toString();
             } else {
                 // JAR
                 try (InputStream is = new BufferedInputStream(new FileInputStream(args[0]))) {
@@ -62,6 +65,7 @@ public class MercatorJava {
                 }
             }
         } catch (Throwable e) {
+            e.printStackTrace();
             result = "{\"error\": \"Error processing the input file: " + e.getMessage() + "\"}";
             retcode = 1;
         }
@@ -106,7 +110,7 @@ public class MercatorJava {
                 continue;
             }
 
-            if (resolvePomsEnabled()) {
+            if (MavenUtils.resolvePomsEnabled()) {
                 String result_key = "pom.xml";
                 // fetch data from pom.xml
                 if (MavenUtils.isPomXml(entry)) {
@@ -150,10 +154,6 @@ public class MercatorJava {
         return output;
     }
 
-    private static boolean resolvePomsEnabled() {
-        return Boolean.parseBoolean(System.getenv("MERCATOR_JAVA_RESOLVE_POMS"));
-    }
-
     private static String getJarKind(String name) {
         String lcName = name.toLowerCase();
 
@@ -162,8 +162,7 @@ public class MercatorJava {
             return "JAR";
         } else if (lcName.endsWith(".war")) {
             return "WAR";
-        }
-        else if (lcName.endsWith(".ear")) {
+        } else if (lcName.endsWith(".ear")) {
             return "EAR";
         }
         return "UNKNOWN";

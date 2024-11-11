@@ -28,12 +28,12 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"sync"
 	"strings"
+	"sync"
 	"time"
 
-	"github.com/shaded-enmity/mercator/core"
-	"github.com/shaded-enmity/mercator/core/fileutils"
+	"github.com/fabric8-analytics/mercator-go/core"
+	"github.com/fabric8-analytics/mercator-go/core/fileutils"
 )
 
 // Sync our Goroutines
@@ -66,10 +66,10 @@ type DigestsRecord struct {
 
 // ItemRecord Contains final information to be printed out
 type ItemRecord struct {
-	RecTime   time.Time  `json:"time"`
-	Path      string     `json:"path"`
-	Ecosystem string     `json:"ecosystem"`
-	Result    JSONObject `json:"result,omitempty"`
+	RecTime   time.Time     `json:"time"`
+	Path      string        `json:"path"`
+	Ecosystem string        `json:"ecosystem"`
+	Result    JSONObject    `json:"result,omitempty"`
 	Digests   DigestsRecord `json:"digests"`
 }
 
@@ -88,7 +88,7 @@ type Output struct {
 
 // Define command line flags
 func init() {
-	flag.StringVar(&configYaml, "config", "/usr/share/mercator/handlers.yml", "location of config file")
+	flag.StringVar(&configYaml, "config", "/usr/local/share/mercator/handlers.yml", "location of config file")
 	flag.BoolVar(&noHandlers, "no-handlers", false, "only print found files and their ecosystem")
 	archiveTypes = map[string]bool{
 		"application/zip": true,
@@ -334,7 +334,7 @@ func main() {
 			log.Fatalln(err)
 		} else {
 			ch := walkFiles(scan_path, config)
-			var resolved         []*ItemRecord
+			var resolved []*ItemRecord
 			var java_invocations []*JavaHandlerInvocation
 			versions := make(map[string]string)
 
@@ -365,7 +365,7 @@ func main() {
 						wg.Add(1)
 						go runHandler(elem, config, &r, true)
 					} else {
-						invocation := &JavaHandlerInvocation{ Config: config, Record: &r, Resolved: elem }
+						invocation := &JavaHandlerInvocation{Config: config, Record: &r, Resolved: elem}
 						java_invocations = append(java_invocations, invocation)
 					}
 				}
@@ -383,7 +383,7 @@ func main() {
 				processJava(java_invocations)
 
 				// TODO: Post-process resolved JSONs and validate schemas
-				if data, err := json.MarshalIndent(Output{ Versions: versions, Items: resolved }, "", "   "); err != nil {
+				if data, err := json.MarshalIndent(Output{Versions: versions, Items: resolved}, "", "   "); err != nil {
 					log.Fatalln(err)
 				} else {
 					fmt.Println(string(data))

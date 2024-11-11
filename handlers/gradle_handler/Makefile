@@ -1,4 +1,4 @@
-# Copyright 2016 Red Hat, Inc.
+# Copyright 2017 Red Hat, Inc.
 #
 # Mercator is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -12,12 +12,9 @@
 # along with Mercator. If not, see <http://www.gnu.org/licenses/>.
 #
 
+
 .PHONY : clean
 
 all:
-	mvn clean test package
-	cp target/java-handler-*-jar-with-dependencies.jar ../java
-	$(MAKE) clean
-
-clean:
-	mvn clean
+	npm install .
+	cp -f gradle ../

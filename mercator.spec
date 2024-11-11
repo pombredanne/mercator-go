@@ -3,22 +3,30 @@
 
 Name:       mercator
 Version:    1
-Release:    19%{?dist}
+Release:    33%{?dist}
 Summary:    Mercator CLI tool
 License:    ASL 2.0
 URL:        https://github.com/fabric8-analytics/%{name}-go
 
 Source0:    %{name}.tar.gz
 
+# TODO: re-enable once mono autoreqs are fixed:
+# https://ci.centos.org/view/Devtools/job/devtools-fabric8-analytics-worker-base-fabric8-analytics/69/console
+AutoReq:    no
+
 BuildRequires:  make openssl-devel golang git
 
 # python handler
 %if 0%{?rhel}
-BuildRequires:  python34-devel
-Requires:       python34
+BuildRequires:  python36-devel
+BuildRequires:  python36-toml
+Requires:       python36
+Requires:       python36-toml
 %else
 BuildRequires:  python3-devel
+BuildRequires:  python3-toml
 Requires:       python3
+Requires:       python3-toml
 %endif
 
 # ruby handler
@@ -35,6 +43,11 @@ Requires:       java maven
 BuildRequires:  mono-devel nuget
 Requires:       mono-core
 
+# golang handler
+BuildRequires:  glide
+
+# gradle handler
+BuildRequires:  npm
 
 %description
 Obtains manifests from various ecosystems such as NPM, .NET, Java and Python
@@ -46,10 +59,10 @@ Obtains manifests from various ecosystems such as NPM, .NET, Java and Python
 yes | certmgr -ssl https://go.microsoft.com
 yes | certmgr -ssl https://nuget.org
 export GOPATH=/tmp
-make build JAVA=YES DOTNET=YES RUST=NO
+make build DESTDIR=%{_prefix} JAVA=YES DOTNET=YES GOLANG=YES GRADLE=YES
 
 %install
-make install DESTDIR=%{buildroot}%{_prefix}
+make install RPM_BUILDROOT=%{buildroot} DESTDIR=%{_prefix}
 
 %clean
 
@@ -63,6 +76,50 @@ make install DESTDIR=%{buildroot}%{_prefix}
 
 
 %changelog
+* Tue Apr 09 2019 Michal Srb <michal@redhat.com> - 1-33
+- Migrate to Python 3.6
+
+* Wed Nov 28 2018 Michal Srb <michal@redhat.com> - 1-32
+- Fix handlers.yml
+
+* Tue Nov 27 2018 Michal Srb <michal@redhat.com> - 1-31
+- Fix build configuration
+
+* Tue Nov 27 2018 Michal Srb <michal@redhat.com> - 1-30
+- Fix destination directory for handlers config
+
+* Tue Nov 27 2018 Michal Srb <michal@redhat.com> - 1-29
+- Disable RPM autoreq
+
+* Thu Nov 22 2018 Michal Srb <michal@redhat.com> - 1-28
+- [golang] Add support for Godeps.json
+
+* Wed Jul 25 2018 Michal Srb <michal@redhat.com> - 1-27
+- [golang] Add support for Gopkg
+
+* Sat Jul 21 2018 Michal Srb <michal@redhat.com> - 1-26
+- [java] Make Maven local repo location configurable
+
+* Fri Apr 27 2018 Saleem Ansari <tuxdna@gmail.com> - 1-25
+- Remove duplicate XML start tags from expanded pom
+- https://github.com/fabric8-analytics/mercator-go/pull/44
+
+* Thu Dec 14 2017 Pavel Kajaba <pavel@redhat.com> - 1-24
+- Initial Gradle support
+
+* Wed Nov 29 2017 Jiri Popelka <jpopelka@redhat.com> - 1-23
+- Go Glide support
+
+* Mon Nov 20 2017 Pavel Kajaba <pavel@redhat.com> - 1-22
+- Ignore inherited description in pom.xml
+
+* Mon Oct 23 2017 Michal Srb <michal@redhat.com> - 1-21
+- Ignore unknown trigger lines in PKGINFO
+
+* Tue Sep 12 2017 Jiri Popelka <jpopelka@redhat.com> - 1-20
+- Haskell handler
+- effective pom files handling
+
 * Thu Jun 29 2017 Jiri Popelka <jpopelka@redhat.com> - 1-19
 - [dotnet handler] Use NuGet v4 library for nuspec reading
 
